@@ -114,6 +114,13 @@ function calculateScore() {
  * Reload the html of cards
  */
 function reloadCards() {
+    if(success()){
+        var result = 'With '+move+' Moves and '+calculateScore()+' Stars';
+        document.getElementById('result').innerHTML = result;
+        document.getElementsByClassName('container')[0].style.display="none";
+        document.getElementsByClassName('result')[0].style.display="flex";
+        return;
+    }
     //reload the cards html
     var content = '';
     for(i=0;i<cardHolder.length;i++){
@@ -146,6 +153,16 @@ function reloadCards() {
     }
 }
 
+function success() {
+    for(i=0;i<cardHolder.length;i++){
+        if(cardHolder[i].status!=2){
+            return false;
+        }
+
+    }
+    return true;
+}
+
 function start() {
     var types = ['diamond','paper-plane-o','anchor','bolt','cube','leaf','bicycle','bomb'];
     move = 0;
@@ -158,6 +175,13 @@ function start() {
     }
     cardHolder = shuffle(cardHolder);
     reloadCards();
+
+}
+
+function playAgain() {
+    document.getElementsByClassName('result')[0].style.display="none";
+    document.getElementsByClassName('container')[0].style.display="flex";
+    start();
 
 }
 /*
