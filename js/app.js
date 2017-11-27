@@ -4,8 +4,9 @@
 var cardHolder = [];
 var cardOpen = null;
 var move = 0;
+var nomatch = false;
 var Card = function (cardContent) {
-    this.status = 0; //status of card: 0, close; 1, open; 2, match;
+    this.status = 0; //status of card: 0, close; 1, open; 2, match; 3, no match
     this.content = cardContent;
 }
 
@@ -27,8 +28,9 @@ Card.prototype.match = function(){
             cardOpen.status=2;
             this.status=2;
         }else{
-            cardOpen.status=0;
-            this.status=0;
+            cardOpen.status=3;
+            this.status=3;
+            nomatch = true;
         }
         cardOpen = null;
     }
@@ -44,6 +46,9 @@ Card.prototype.toHtml = function () {
             break;
         case 2:
             template = template.replace('card','card match');
+            break;
+        case 3:
+            template = template.replace('card','card nomatch');
             break;
     }
     return template;
@@ -71,6 +76,39 @@ function shuffle(array) {
     return array;
 }
 
+function reloadScore() {
+    var scoreContent = '';
+    var t = calculateScore();
+    for(i=t;i>0;i--){
+        if (i>=1){
+            scoreContent += '<li><i class="fa fa-star"></i></li>';
+        }else{
+            scoreContent += '<li><i class="fa fa-star-half-o"></i></li>';
+        }
+    }
+    if(t<=0){
+        scoreContent += '<li><i class="fa fa-star-o"></i></li>';
+        scoreContent += '<li><i class="fa fa-star-o"></i></li>';
+        scoreContent += '<li><i class="fa fa-star-o"></i></li>';
+    }else if(t<=1){
+        scoreContent += '<li><i class="fa fa-star-o"></i></li>';
+        scoreContent += '<li><i class="fa fa-star-o"></i></li>';
+    }else if(t<=2){
+        scoreContent += '<li><i class="fa fa-star-o"></i></li>';
+    }
+    document.getElementsByClassName('stars')[0].innerHTML = scoreContent;
+    //reload the move
+    document.getElementsByClassName('moves')[0].innerHTML = move;
+}
+
+function calculateScore() {
+    var score = 3;
+    var t = move-20;
+    t = t>0?t:0;
+    score = score - t/5;
+    score = score<0?0:score;
+    return score;
+}
 
 /**
  * Reload the html of cards
@@ -82,8 +120,7 @@ function reloadCards() {
         content += cardHolder[i].toHtml().replace('p_0',i.toString());
     }
     document.getElementById('deck').innerHTML = content;
-    //reload the move
-    document.getElementsByClassName('moves')[0].innerHTML = move;
+    reloadScore();
     //bind listener
     var cards = document.getElementsByClassName('card');
     for(i=0;i<cards.length;i++){
@@ -94,6 +131,18 @@ function reloadCards() {
             cardHolder[p].click();
             reloadCards();
         });
+    }
+    if(nomatch){
+        nomatch = false;
+        setTimeout(function () {
+            for(i=0;i<cardHolder.length;i++){
+                if(cardHolder[i].status==3){
+                    cardHolder[i].status=0;
+                }
+
+            }
+            reloadCards();
+        },500);
     }
 }
 
@@ -121,7 +170,7 @@ function start() {
  *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
  *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
  */
-// start();
+start();
 
 
 
