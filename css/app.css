@@ -99,7 +99,7 @@ h1 {
 
 .score-panel {
     text-align: left;
-    width: 345px;
+    width: 600px;
     margin-bottom: 10px;
 }
 
@@ -118,6 +118,9 @@ h1 {
 .score-panel .restart {
     float: right;
     cursor: pointer;
+}
+.score-panel div{
+    text-align: center;
 }
 .btn{
     display: inline-block;
@@ -150,4 +153,17 @@ p{
     font-weight: 100;
     text-align: center;
     margin-top: -10px;
+}
+
+.result{
+    display: none;
+}
+
+.result header div{
+    text-align: center;padding: 0;
+}
+
+.icon-success{
+    color: #5cb85c;
+    font-size: 8em;
 }
